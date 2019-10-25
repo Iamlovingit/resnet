@@ -30,5 +30,6 @@
 *.exe
 *.out
 *.app
+*.swp
 /cmake-build-debug/
 .idea
