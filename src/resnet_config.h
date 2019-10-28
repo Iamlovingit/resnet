@@ -87,5 +87,6 @@ class Config {
  private:
   InputLayer input_layer_;
   std::map<std::string, Layer> map_layer_;
+  std::vector<Layer> vec_layer_;
 };
 } // namespace RESNET

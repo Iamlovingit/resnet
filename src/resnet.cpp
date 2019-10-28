@@ -14,6 +14,10 @@ int main(int argc, char** argv) {
     return -1;
   }
 
+  LoadData();
+
+  Train();
+
   std::cout << FLAGS_config_file << std::endl;
   std::cout << FLAGS_train_data_file << std::endl;
   return 0;

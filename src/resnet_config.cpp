@@ -187,6 +187,7 @@ int Config::ParseLayer() {
       cur++; //pass over layer "}"
     }
     map_layer_[layer.name] = layer;
+    vec_layer_.push_back(layer);
   }
   return cur;
 }
