@@ -18,6 +18,7 @@ struct WeightFiller {
 struct InnerProduct {
   std::string output_size;
   WeightFiller weight_filler;
+  BiasFiller bias_filler;
 };
 
 struct EltWise {
@@ -27,6 +28,7 @@ struct EltWise {
 struct Pooling {
   std::string pool;
   int kernel_size;
+  int stride;
 };
 
 struct BatchNorm {
@@ -44,14 +46,14 @@ struct Convolution {
   bool bias_term;
 };
 
-typedef struct InputLayer {
+struct InputLayer {
   std::string title;
   std::string name;
   int batch_size;
   int channel_size;
   int height_size;
   int width_size;
-}InputLayer;
+};
 
 
 struct Layer {
