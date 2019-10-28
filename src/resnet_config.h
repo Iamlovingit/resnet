@@ -84,7 +84,7 @@ class Config {
   std::vector<std::string> file_buf_;
   int total_line_no_;
   int cur_line_no_;
- private:
+ public:
   InputLayer input_layer_;
   std::map<std::string, Layer> map_layer_;
   std::vector<Layer> vec_layer_;

@@ -14,11 +14,10 @@ int main(int argc, char** argv) {
     return -1;
   }
 
-  LoadData();
+  Matrix mat_data(config.input_layer_.channel_size,\
+                  config.input_layer_.height_size, \
+                  config.input_layer_.width_size);
 
-  Train();
-
-  std::cout << FLAGS_config_file << std::endl;
-  std::cout << FLAGS_train_data_file << std::endl;
+  Train(mat_data,cofig);
   return 0;
 }

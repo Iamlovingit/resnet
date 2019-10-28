@@ -9,3 +9,4 @@
 #include "resnet_macro.h"
 #include "resnet_config.h"
 #include "resnet_3rd.h"
+#include "resnet_matrix.h"
