@@ -14,7 +14,7 @@ int main(int argc, char** argv) {
     return -1;
   }
 
-  Resnet::Matrix input_data(config.input_layer_.channel_size,\
+  Resnet::Matrix3 input_data(config.input_layer_.channel_size,\
                   config.input_layer_.height_size, \
                   config.input_layer_.width_size);
 

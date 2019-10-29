@@ -5,14 +5,15 @@
 #pragma once
 #include "resnet_config.h"
 #include "resnet_matrix.h"
+#include "resnet_math.h"
 namespace Resnet {
 class FrontPropagation {
  public:
-  FrontPropagation(Matrix,Config);
+  FrontPropagation(Matrix3,Config);
   int Train();
  private:
-  Matrix in_data_;
+  Matrix3 in_data_;
   Config config_;
-  std::map<std::string, Matirx> map_progress;
+  std::map<std::string, Matrix3> map_progress;
 };
 }
