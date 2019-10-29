@@ -4,8 +4,9 @@
 
 #pragma once
 #include <vector>
+#include <string>
 #include <map>
-namespace RESNET {
+namespace Resnet {
 struct BiasFiller {
   std::string type;
   int value;
@@ -70,10 +71,17 @@ struct Layer {
 
 class Config {
  public:
+  Config() {
+    file_name_.clear();
+    file_buf_.clear();
+    total_line_no_=0;
+    cur_line_no_=0;
+  }
   explicit Config(std::string file_name):
   file_name_(file_name){
   }
   bool Load();
+  void operator=(Config);
  private:
   bool Parse();
   int ParseInputLayer();

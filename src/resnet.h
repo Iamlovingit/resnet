@@ -10,3 +10,4 @@
 #include "resnet_config.h"
 #include "resnet_3rd.h"
 #include "resnet_matrix.h"
+#include "resnet_frontpropagation.h"

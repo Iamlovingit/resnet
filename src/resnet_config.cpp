@@ -8,7 +8,7 @@
 
 #include "resnet_config.h"
 #include "resnet_3rd.h"
-namespace RESNET {
+namespace Resnet {
 bool Config::Load() {
   std::ifstream ifile;
   ifile.open(file_name_.c_str());
@@ -190,5 +190,16 @@ int Config::ParseLayer() {
     vec_layer_.push_back(layer);
   }
   return cur;
+}
+
+void Config::operator=(Resnet::Config config) {
+  this->file_buf_ = config.file_buf_;
+  this->file_name_ = config.file_name_;
+  this->total_line_no_ = config.total_line_no_;
+  this->cur_line_no_ = config.cur_line_no_;
+
+  this->input_layer_ = config.input_layer_;
+  this->map_layer_ = config.map_layer_;
+  this->vec_layer_ = config.vec_layer_;
 }
 }
