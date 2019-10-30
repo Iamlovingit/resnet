@@ -17,7 +17,7 @@ struct WeightFiller {
 };
 
 struct InnerProduct {
-  std::string output_size;
+  int output_size;
   WeightFiller weight_filler;
   BiasFiller bias_filler;
 };
@@ -60,7 +60,7 @@ struct InputLayer {
 struct Layer {
   std::string name;
   std::string type;
-  std::string bottom;
+  std::vector<std::string> bottom;
   std::string top;
   Convolution convolution;
   BatchNorm batch_norm;

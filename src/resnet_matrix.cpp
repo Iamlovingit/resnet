@@ -20,7 +20,7 @@ Matrix3::Matrix3(int row_size, int col_size, int channel_size) {
     for(int j = 0; j < row_size; j++) {
       mat_[i][j] = (float*) malloc(col_size * sizeof(float));
       for(int k = 0; k < col_size; k++) {
-        mat_[i][j][k] = rand()%(MAX_RAND+1);
+        mat_[i][j][k] = rand()%(MAX_RAND+1)/(float)(MAX_RAND+1) - 0.5; //-0.5 ~ 0.5
       }
     }
   }
@@ -65,6 +65,56 @@ void Matrix3::operator=(const Resnet::Matrix3 &matrix) {
       }
     }
   }
+}
+
+Matrix3 Matrix3::operator+(const Resnet::Matrix3 &matrix) {
+  Matrix3 out(this->channel_size_, this->row_size_, this->col_size_);
+  for(int i = 0; i < channel_size_; i++) {
+    for(int j = 0; j < row_size_; j++) {
+      for(int k = 0; k < col_size_; k++) {
+        out.mat_[i][j][k] = this->mat_[i][j][k]+matrix.mat_[i][j][k];
+      }
+    }
+  }
+  return out;
+}
+
+
+Matrix3 Matrix3::operator-= (const double &value) {
+  Matrix3 out(this->channel_size_, this->row_size_, this->col_size_);
+  for(int i = 0; i < channel_size_; i++) {
+    for(int j = 0; j < row_size_; j++) {
+      for(int k = 0; k < col_size_; k++) {
+        out.mat_[i][j][k] = this->mat_[i][j][k]-value;
+      }
+    }
+  }
+  return out;
+}
+
+Matrix3 Matrix3::operator*(const Resnet::Matrix3 &matrix) {
+  Matrix3 out(this->channel_size_, this->row_size_, matrix.col_size_, 0);
+  for(int i = 0; i < out.channel_size_; i++) {
+    for(int j = 0; j < out.row_size_; j++) {
+      for(int k = 0; k < out.col_size_; k++) {
+        for(int n = 0; n < matrix.row_size_; n++)
+          out.mat_[i][j][k] += this->mat_[i][j][n]*matrix.mat_[i][n][k];
+      }
+    }
+  }
+  return out;
+}
+
+Matrix3 Matrix3::operator/(const float &value) {
+  Matrix3 out(this->channel_size_, this->row_size_, this->col_size_, 0);
+  for(int i = 0; i < out.channel_size_; i++) {
+    for(int j = 0; j < out.row_size_; j++) {
+      for(int k = 0; k < out.col_size_; k++) {
+          out.mat_[i][j][k] = this->mat_[i][j][k] / value;
+      }
+    }
+  }
+  return out;
 }
 
 Matrix3::~Matrix3() {

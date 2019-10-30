@@ -65,4 +65,138 @@ float Math::Feature(const Resnet::Matrix3 &data, const Resnet::Matrix3 &kernel, 
   }
   return value;
 }
+
+Matrix3 Math::BN(const Resnet::Matrix3 &in_data, float maf, float eps, bool scale_bias) {
+  Matrix3 out(in_data.channel_size_, in_data.row_size_, in_data.col_size_, 0);
+  Matrix3 mean(in_data.channel_size_, in_data.row_size_, in_data.col_size_, 0);
+  return in_data;
+}
+
+Matrix3 Math::Pooling(const Resnet::Matrix3 &in_data, int kernel_size, int stride, std::string type) {
+  //calc out row,col
+  int row = (in_data.row_size_ - kernel_size)/stride + 1;
+  int col = row;
+  Matrix3 out(in_data.channel_size_, row, col, 0);
+  for(int ch = 0; ch < out.channel_size_; ch++) {
+    for(int r = 0; r < row; r++) {
+      for(int c = 0; c < col; c++) {
+        out.mat_[ch][r][c] = PoolingFeature(in_data, kernel_size, stride, type, ch, r, c);
+      }
+    }
+  }
+  return out;
+}
+
+float Math::PoolingFeature(const Resnet::Matrix3 &in_data, int kernel_size, int stride, std::string type, int ch,
+                             int row, int col) {
+  //get matrix2
+  Matrix2 mat(kernel_size,kernel_size);
+  //init mat
+  for(int r = 0; r < kernel_size; r++) {
+    for(int c = 0; c < kernel_size; c++) {
+      mat.mat_[r][c] = in_data.mat_[ch][row*stride+r][col*stride+c];
+    }
+  }
+
+  float value = 0;
+  if(type == "MAX") {
+    for(int r = 0; r < kernel_size; r++) {
+      for(int c = 0; c < kernel_size; c++) {
+        if(value <= mat.mat_[r][c]) {
+          value = mat.mat_[r][c];
+        }
+      }
+    }
+  } else if(type == "AVE") {
+    for(int r = 0; r < kernel_size; r++) {
+      for(int c = 0; c < kernel_size; c++) {
+        value += mat.mat_[r][c];
+      }
+    }
+    value /= (kernel_size*kernel_size);
+  }
+  return value;
+}
+
+Matrix3 Math::ReLU(const Resnet::Matrix3 &in_data, float value) {
+  Matrix3 out(in_data.channel_size_, in_data.row_size_, in_data.col_size_, 0);
+  for(int ch = 0; ch < out.channel_size_; ch++) {
+    for(int row = 0; row < out.row_size_; row++) {
+      for(int col = 0; col < out.col_size_; col++) {
+        out.mat_[ch][row][col] = in_data.mat_[ch][row][col] > value ? in_data.mat_[ch][row][col] : value;
+      }
+    }
+  }
+  return out;
+}
+
+Matrix3 Math::FullConnect(const Resnet::Matrix3 &in_data, const Resnet::InnerProduct &inner) {
+  Matrix3 bias(in_data.channel_size_, inner.output_size, 1);
+  Matrix3 mat_reshape = Reshape(in_data, 1,in_data.row_size_*in_data.col_size_*in_data.channel_size_,1);
+  Matrix3 kernel(1, inner.output_size, mat_reshape.row_size_);
+  Matrix3 out = kernel * mat_reshape + bias;
+  return out;
+}
+
+Matrix3 Math::Reshape(const Resnet::Matrix3 &in_data, int ch, int row, int col) {
+  Matrix3 out(ch,row,col,0);
+  int count=0;
+  for(int i = 0; i < ch; i++) {
+    for(int j = 0; j < row; j++) {
+      for(int k = 0; k < col; k++) {
+        out.mat_[i][j][k] =
+          in_data.mat_[count%(in_data.row_size_*in_data.col_size_*in_data.channel_size_)]\
+                      [count%(in_data.row_size_*in_data.col_size_)]\
+                      [count%in_data.col_size_];
+        count++;
+      }
+    }
+  }
+  return out;
+}
+
+Matrix3 Math::Softmax(const Resnet::Matrix3 &in_data) {
+  Matrix3 temp = in_data;
+  //calc temp - max element
+  float max_value = -1;
+  for(int ch = 0; ch < in_data.channel_size_; ch++) {
+    for(int row = 0; row < in_data.row_size_; row++) {
+      for(int col = 0; col < in_data.col_size_; col++) {
+        if(max_value < in_data.mat_[ch][row][col]) {
+          max_value = in_data.mat_[ch][row][col];
+        }
+      }
+    }
+  }
+  temp -= max_value;
+  //calc exp
+  Matrix3 temp_exp = CalcExp(temp);
+  //calc sum
+  float sum = 0;
+  for(int ch = 0; ch < temp_exp.channel_size_; ch++) {
+    for(int row = 0; row < temp_exp.row_size_; row++) {
+      for(int col = 0; col < temp_exp.col_size_; col++) {
+        sum += temp_exp.mat_[ch][row][col];
+      }
+    }
+  }
+  //div
+  Matrix3 out = temp_exp / sum;
+  return out;
+}
+
+Matrix3 Math::CalcExp(const Resnet::Matrix3 &in_data) {
+  Matrix3 out(in_data.channel_size_, in_data.row_size_, in_data.col_size_, 0);
+  for(int ch = 0; ch < out.channel_size_; ch++) {
+    for(int row = 0; row < out.row_size_; row++) {
+      for(int col = 0; col < out.col_size_; col++) {
+        out.mat_[ch][row][col] = exp(in_data.mat_[ch][row][col]);
+        if(out.mat_[ch][row][col] == 0) {
+          out.mat_[ch][row][col] = (std::numeric_limits<float>::min)();
+        }
+      }
+    }
+  }
+  return out;
+}
 } // namespace Resnet

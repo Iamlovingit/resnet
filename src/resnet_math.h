@@ -5,6 +5,8 @@
 #pragma once
 #include "resnet_matrix.h"
 #include "resnet_config.h"
+#include <cmath>
+#include <limits>
 
 namespace Resnet {
 class Math {
@@ -13,5 +15,14 @@ class Math {
   static Matrix3 PadMatrix(const Matrix3 &in_data, int pad);
   static float Feature(const Matrix3& in_data, const Matrix3& kernel, int channel_no, \
                       int in_channel_no, int row, int col, int stride);
+  static Matrix3 BN(const Matrix3& in_data, float maf, float eps, bool scale_bias);
+  static Matrix3 Pooling(const Matrix3& in_data, int kernel_size, int stride, std::string type);
+  static float PoolingFeature(const Matrix3& in_data, int kernel_size, int stride,
+                                std::string type, int ch, int row, int col);
+  static Matrix3 ReLU(const Matrix3& in_data, float value);
+  static Matrix3 FullConnect(const Matrix3& in_data, const InnerProduct& inner);
+  static Matrix3 Reshape(const Matrix3& in_data, int ch, int row, int col);
+  static Matrix3 Softmax(const Matrix3& in_data);
+  static Matrix3 CalcExp(const Matrix3& in_data);
 };
 } // namespace Resnet

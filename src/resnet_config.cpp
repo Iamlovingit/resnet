@@ -88,7 +88,7 @@ int Config::ParseLayer() {
       layer.type = type_st[1];
       lbuf = file_buf_[cur++]; // bottom line
       Poco::StringTokenizer bottom_st(lbuf,":");
-      layer.bottom = bottom_st[1];
+      layer.bottom.push_back(bottom_st[1]);
       lbuf = file_buf_[cur++]; // top line
       Poco::StringTokenizer top_st(lbuf,":");
       layer.top = top_st[1];

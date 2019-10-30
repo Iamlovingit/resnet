@@ -23,6 +23,10 @@ class Matrix3 {
   Matrix3();
   ~Matrix3();
   void operator= (const Matrix3&);
+  Matrix3 operator+ (const Matrix3& m1);
+  Matrix3 operator* (const Matrix3& m1);
+  Matrix3 operator-= (const double& value);
+  Matrix3 operator/(const float& value);
  public:
   int channel_size_;
   int row_size_;
