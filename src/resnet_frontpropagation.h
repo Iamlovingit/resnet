@@ -9,11 +9,11 @@
 namespace Resnet {
 class FrontPropagation {
  public:
-  FrontPropagation(Matrix3,Config);
+  FrontPropagation(std::vector<Matrix3>,Config);
   int Train();
  private:
-  Matrix3 in_data_;
+  std::vector<Matrix3> in_data_;
   Config config_;
-  std::map<std::string, Matrix3> map_progress;
+  std::map<std::string, std::vector<Matrix3>> map_progress;
 };
 }

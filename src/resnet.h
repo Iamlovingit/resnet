@@ -5,6 +5,7 @@
 #pragma once
 
 #include <iostream>
+#include <Poco/Timestamp.h>
 
 #include "resnet_macro.h"
 #include "resnet_config.h"

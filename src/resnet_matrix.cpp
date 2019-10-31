@@ -118,11 +118,13 @@ Matrix3 Matrix3::operator/(const float &value) {
 }
 
 Matrix3::~Matrix3() {
-  for(int i = 0; i < channel_size_; i++) {
-    for(int j = 0; j < row_size_; j++) {
-        free(mat_[i][j]);
-    }
-  }
+//  for(int i = 0; i < channel_size_; i++) {
+//    for(int j = 0; j < row_size_; j++) {
+//      if(mat_[i][j] != nullptr) {
+//        free(mat_[i][j]);
+//      }
+//    }
+//  }
 }
 
 

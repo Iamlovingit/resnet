@@ -15,7 +15,7 @@ class Math {
   static Matrix3 PadMatrix(const Matrix3 &in_data, int pad);
   static float Feature(const Matrix3& in_data, const Matrix3& kernel, int channel_no, \
                       int in_channel_no, int row, int col, int stride);
-  static Matrix3 BN(const Matrix3& in_data, float maf, float eps, bool scale_bias);
+  static std::vector<Matrix3> BN(const std::vector<Matrix3>& in_data, float maf, float eps, bool scale_bias);
   static Matrix3 Pooling(const Matrix3& in_data, int kernel_size, int stride, std::string type);
   static float PoolingFeature(const Matrix3& in_data, int kernel_size, int stride,
                                 std::string type, int ch, int row, int col);

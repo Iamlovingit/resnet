@@ -66,10 +66,40 @@ float Math::Feature(const Resnet::Matrix3 &data, const Resnet::Matrix3 &kernel, 
   return value;
 }
 
-Matrix3 Math::BN(const Resnet::Matrix3 &in_data, float maf, float eps, bool scale_bias) {
-  Matrix3 out(in_data.channel_size_, in_data.row_size_, in_data.col_size_, 0);
-  Matrix3 mean(in_data.channel_size_, in_data.row_size_, in_data.col_size_, 0);
-  return in_data;
+std::vector<Matrix3> Math::BN(const std::vector<Resnet::Matrix3> &in_data, float maf, float eps, bool scale_bias) {
+  std::vector<Matrix3> out;
+  Matrix3 mean(in_data[0].channel_size_, in_data[0].row_size_, in_data[0].col_size_, 0);
+  for(auto it : in_data) {
+    mean = mean + it;
+  }
+  mean = mean/in_data.size();
+
+  Matrix3 sqrt_mat(mean.channel_size_, mean.row_size_, mean.col_size_,0);
+  for(int ch = 0; ch < in_data[0].channel_size_; ch++) {
+    for(int row = 0; row < in_data[0].row_size_; row++) {
+      for(int col = 0; col < in_data[0].col_size_; col++) {
+        for(int i = 0; i < in_data.size(); i++) {
+          sqrt_mat.mat_[ch][row][col] += pow(in_data[i].mat_[ch][row][col]-mean[ch][row][col], 2);
+        }
+        sqrt_mat.mat_[ch][row][col] /= in_data.size();
+        sqrt_mat.mat_[ch][row][col] = (float)sqrt(sqrt_mat.mat_[ch][row][col]+1e-4);
+      }
+    }
+  }
+
+  for(int i = 0; i < in_data.size(); i++) {
+    Matrix3 mat(mean.channel_size_, mean.row_size_, mean.col_size_, 0);
+    for(int ch = 0; ch < in_data[0].channel_size_; ch++) {
+      for (int row = 0; row < in_data[0].row_size_; row++) {
+        for (int col = 0; col < in_data[0].col_size_; col++) {
+          mat.mat_[ch][row][col] = 1e-2 * (in_data[i].mat_[ch][row][col] - mean.mat_[ch][row][col]) \
+                                   /sqrt_mat.mat_[ch][row][col] + 1e-2;
+        }
+      }
+    }
+    out.push_back(mat);
+  }
+  return out;
 }
 
 Matrix3 Math::Pooling(const Resnet::Matrix3 &in_data, int kernel_size, int stride, std::string type) {

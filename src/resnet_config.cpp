@@ -15,7 +15,7 @@ bool Config::Load() {
   std::string lbuf;
   while(getline(ifile,lbuf)) {
     lbuf = Poco::trim(lbuf);
-    if(lbuf[0] == '#') continue;
+    if(lbuf[0] == '#' || lbuf.length() == 0) continue;
     file_buf_.push_back(lbuf);
   }
   total_line_no_ = file_buf_.size();
@@ -78,20 +78,28 @@ int Config::ParseLayer() {
   while(cur < file_buf_.size()) {
     Layer layer;
     //find layer head.
-    if(file_buf_[cur].find("layer") != std::string::npos) {
-      cur++; // move to layer body line
+    if(file_buf_[cur++].find("layer") != std::string::npos) {
       std::string lbuf = file_buf_[cur++]; //name line
       Poco::StringTokenizer name_st(lbuf,":");
       layer.name = name_st[1];
       lbuf = file_buf_[cur++]; // type line
       Poco::StringTokenizer type_st(lbuf,":");
-      layer.type = type_st[1];
-      lbuf = file_buf_[cur++]; // bottom line
-      Poco::StringTokenizer bottom_st(lbuf,":");
-      layer.bottom.push_back(bottom_st[1]);
+      layer.type = lbuf = Poco::trim(type_st[1]);
+      while(1) {
+        lbuf = file_buf_[cur++]; // bottom line
+        if(lbuf.find("bottom") == std::string::npos) {
+          cur--;
+          break;
+        }
+        Poco::StringTokenizer bottom_st(lbuf,":");
+        layer.bottom.push_back(bottom_st[1]);
+      }
+
       lbuf = file_buf_[cur++]; // top line
       Poco::StringTokenizer top_st(lbuf,":");
       layer.top = top_st[1];
+      std::cout << "layer.type === <" << layer.type << ">" << std::endl;
+      std::cout << "sencond    === <" << "\"Convolution\"" << ">" << std::endl;
 
       if(layer.type == "\"Convolution\"") {
         cur++; //pass over head line.
@@ -110,7 +118,6 @@ int Config::ParseLayer() {
           } else if (st[0] == "bias_term") { // bias_term line
             layer.convolution.bias_term = (st[1]=="true"?true:false);
           } else if (lbuf.find("weight_filler") != std::string::npos) {
-            cur++; //init weight
             std::string ws = file_buf_[cur++];
             Poco::StringTokenizer wst(ws, ":");
             layer.convolution.weight_filler.type = wst[1];
@@ -150,6 +157,7 @@ int Config::ParseLayer() {
         cur++; //pass over pooling_pram "}"
       } else if (layer.type == "\"Eltwise\"") {
         cur++;
+        std::cout << "eltwise bottom size = " << layer.bottom.size() << std::endl;
         Poco::StringTokenizer st(file_buf_[cur++], ":");
         layer.elt_wise.operation = st[1];
         cur++;//pass over elt_wise "}"
@@ -162,14 +170,12 @@ int Config::ParseLayer() {
           if(st[0] == "num_output") {
             layer.inner_product.output_size = atoi(st[1].c_str());
           } else if (lbuf.find("weight_filler") != std::string::npos) {
-            cur++;
             std::string ws = file_buf_[cur++];
             Poco::StringTokenizer wst(ws, ":");
             layer.inner_product.weight_filler.type = wst[1];
             cur++;
           } else if (lbuf.find("bias_filler") != std::string::npos) {
             while(1) {
-              cur++;
               std::string bs = file_buf_[cur++];
               if(bs == "}") break;
               Poco::StringTokenizer bst(bs, ":");
