@@ -28,7 +28,8 @@ int FrontPropagation::Train() {
                        layer.convolution.kernel_size,
                        layer.convolution.kernel_size);
         std::cout << "push back! conv out" << std::endl;
-        out.push_back(Math::Conv(it, kernel, layer.convolution));
+        Matrix3 t = Math::Conv(it, kernel, layer.convolution);
+        out.push_back(t);
       }
       std::cout << layer.name << " out.size = " << out.size() <<std::endl;
       map_progress[layer.name] = out;
