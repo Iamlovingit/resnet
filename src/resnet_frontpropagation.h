@@ -3,13 +3,14 @@
 //
 
 #pragma once
+#include <iostream>
 #include "resnet_config.h"
 #include "resnet_matrix.h"
 #include "resnet_math.h"
 namespace Resnet {
 class FrontPropagation {
  public:
-  FrontPropagation(std::vector<Matrix3>,Config);
+  FrontPropagation(std::vector<Matrix3>&,Config);
   int Train();
  private:
   std::vector<Matrix3> in_data_;

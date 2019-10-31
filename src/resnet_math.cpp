@@ -79,7 +79,7 @@ std::vector<Matrix3> Math::BN(const std::vector<Resnet::Matrix3> &in_data, float
     for(int row = 0; row < in_data[0].row_size_; row++) {
       for(int col = 0; col < in_data[0].col_size_; col++) {
         for(int i = 0; i < in_data.size(); i++) {
-          sqrt_mat.mat_[ch][row][col] += pow(in_data[i].mat_[ch][row][col]-mean[ch][row][col], 2);
+          sqrt_mat.mat_[ch][row][col] += pow(in_data[i].mat_[ch][row][col]-mean.mat_[ch][row][col], 2);
         }
         sqrt_mat.mat_[ch][row][col] /= in_data.size();
         sqrt_mat.mat_[ch][row][col] = (float)sqrt(sqrt_mat.mat_[ch][row][col]+1e-4);

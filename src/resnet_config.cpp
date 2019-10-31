@@ -21,6 +21,7 @@ bool Config::Load() {
   total_line_no_ = file_buf_.size();
   cur_line_no_ = 0;
   bool ret = Parse();
+  std::cout << "Parse over, layer size = " << vec_layer_.size() << std::endl;
   return ret;
 }
 
@@ -92,14 +93,14 @@ int Config::ParseLayer() {
           break;
         }
         Poco::StringTokenizer bottom_st(lbuf,":");
-        layer.bottom.push_back(bottom_st[1]);
+        layer.bottom.push_back(Poco::trim(bottom_st[1]));
       }
 
       lbuf = file_buf_[cur++]; // top line
       Poco::StringTokenizer top_st(lbuf,":");
-      layer.top = top_st[1];
-      std::cout << "layer.type === <" << layer.type << ">" << std::endl;
-      std::cout << "sencond    === <" << "\"Convolution\"" << ">" << std::endl;
+      layer.top = Poco::trim(top_st[1]);
+//      std::cout << "layer.type === <" << layer.type << ">" << std::endl;
+//      std::cout << "sencond    === <" << "\"Convolution\"" << ">" << std::endl;
 
       if(layer.type == "\"Convolution\"") {
         cur++; //pass over head line.
@@ -157,7 +158,7 @@ int Config::ParseLayer() {
         cur++; //pass over pooling_pram "}"
       } else if (layer.type == "\"Eltwise\"") {
         cur++;
-        std::cout << "eltwise bottom size = " << layer.bottom.size() << std::endl;
+//        std::cout << "eltwise bottom size = " << layer.bottom.size() << std::endl;
         Poco::StringTokenizer st(file_buf_[cur++], ":");
         layer.elt_wise.operation = st[1];
         cur++;//pass over elt_wise "}"
@@ -192,8 +193,11 @@ int Config::ParseLayer() {
       }
       cur++; //pass over layer "}"
     }
-    map_layer_[layer.name] = layer;
-    vec_layer_.push_back(layer);
+    if(layer.name.length() != 0) {
+      std::cout << "push pack layer.name = " << layer.name << std::endl;
+      map_layer_[layer.name] = layer;
+      vec_layer_.push_back(layer);
+    }
   }
   return cur;
 }

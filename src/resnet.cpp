@@ -20,6 +20,7 @@ int main(int argc, char** argv) {
                   config.input_layer_.height_size, \
                   config.input_layer_.width_size);
   input_data.push_back(data);
+  std::cout << "main:: inputdata size = " << input_data.size() << std::endl;
 
   Resnet::FrontPropagation front(input_data,config);
   Poco::Timestamp start;

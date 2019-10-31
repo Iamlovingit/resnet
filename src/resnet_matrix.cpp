@@ -8,7 +8,7 @@
 #include <ctime>
 namespace Resnet {
 #define MAX_RAND 99
-Matrix3::Matrix3(int row_size, int col_size, int channel_size) {
+Matrix3::Matrix3(int channel_size, int row_size, int col_size) {
   channel_size_ = channel_size;
   row_size_ = row_size;
   col_size_ = col_size;
@@ -26,7 +26,7 @@ Matrix3::Matrix3(int row_size, int col_size, int channel_size) {
   }
 }
 
-Matrix3::Matrix3(int row_size, int col_size, int channel_size, float value) {
+Matrix3::Matrix3(int channel_size, int row_size, int col_size, float value) {
   channel_size_ = channel_size;
   row_size_ = row_size;
   col_size_ = col_size;
