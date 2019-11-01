@@ -4,6 +4,7 @@
 
 #pragma once
 #include <vector>
+#include "resnet_hpc_matrix_multi.h"
 namespace Resnet {
 
 class Matrix2 {
