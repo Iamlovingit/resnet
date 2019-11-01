@@ -15,7 +15,8 @@ int FrontPropagation::Train() {
   map_progress["\"data\""] = in_data_;
   std::vector<Matrix3> test = map_progress["\"data\""];
   for(int i = 0; i < config_.vec_layer_.size(); i++) {
-    std::cout << "train process: " << i << "/" << config_.vec_layer_.size() << std::endl;
+    std::cout << "train process: " << i << "/" << config_.vec_layer_.size()  << "<" << config_.vec_layer_[i].type << ">"  << config_.vec_layer_[i].name
+    << std::endl;
     Layer layer = config_.vec_layer_[i];
     if(layer.type == "\"Convolution\"") {
       //get input data .
@@ -28,17 +29,20 @@ int FrontPropagation::Train() {
                        layer.convolution.kernel_size,
                        layer.convolution.kernel_size);
         std::cout << "push back! conv out" << std::endl;
-        Matrix3 t = Math::Conv(it, kernel, layer.convolution);
-        out.push_back(t);
+        out.push_back(Math::Conv(it, kernel, layer.convolution));
       }
       std::cout << layer.name << " out.size = " << out.size() <<std::endl;
+      std::cout << "ttt out.row size= " << out[0].row_size_ << std::endl;
       map_progress[layer.name] = out;
     } else if (layer.type == "\"BatchNorm\"") {
       std::vector<Matrix3> in_data = map_progress[layer.bottom[0]];
+      std::cout << "bn-bottom=*" << layer.bottom[0] << "*" << std::endl;
+      std::cout << "bn in_data size = " << in_data.size() << std::endl;
       std::vector<Matrix3> out = Math::BN(in_data,
                              layer.batch_norm.moving_average_fraction,
                              layer.batch_norm.eps,
                              layer.batch_norm.scale_bias);
+      std::cout << "ttt out.row size= " << out[0].row_size_ << std::endl;
       map_progress[layer.name] = out;
     } else if (layer.type == "\"Pooling\"") {
       std::vector<Matrix3> in_data = map_progress[layer.bottom[0]];
@@ -46,6 +50,7 @@ int FrontPropagation::Train() {
       for(auto it : in_data) {
         out.push_back(Math::Pooling(it, layer.pooling.kernel_size, layer.pooling.stride, layer.pooling.pool));
       }
+      std::cout << "ttt out.row size= " << out[0].row_size_ << std::endl;
       map_progress[layer.name] = out;
     } else if (layer.type == "\"Eltwise\"") {
       std::vector<Matrix3> in_data1 = map_progress[layer.bottom[0]];
@@ -54,6 +59,7 @@ int FrontPropagation::Train() {
       for(int i = 0; i < in_data1.size(); i++) {
         out.push_back(in_data1[i] + in_data2[i]);
       }
+      std::cout << "ttt out.row size= " << out[0].row_size_ << std::endl;
       map_progress[layer.name] = out;
     } else if (layer.type == "\"InnerProduct\"") {
       std::vector<Matrix3> in_data = map_progress[layer.bottom[0]];
@@ -61,6 +67,7 @@ int FrontPropagation::Train() {
       for(auto it : in_data) {
         out.push_back(Math::FullConnect(it, layer.inner_product));
       }
+      std::cout << "ttt out.row size= " << out[0].row_size_ << std::endl;
       map_progress[layer.name] = out;
     } else if (layer.type == "\"Softmax\"") {
       std::vector<Matrix3> in_data = map_progress[layer.bottom[0]];
@@ -68,6 +75,7 @@ int FrontPropagation::Train() {
       for(auto it : in_data) {
         out.push_back(Math::Softmax(it));
       }
+      std::cout << "ttt out.row size= " << out[0].row_size_ << std::endl;
       map_progress[layer.name] = out;
     } else if (layer.type == "\"ReLU\"") {
       std::vector<Matrix3> in_data = map_progress[layer.bottom[0]];
@@ -75,6 +83,7 @@ int FrontPropagation::Train() {
       for(auto it : in_data) {
         out.push_back(Math::ReLU(it, 0.0));
       }
+      std::cout << "ttt out.row size= " << out[0].row_size_ << std::endl;
       map_progress[layer.name] = out;
     }
   }

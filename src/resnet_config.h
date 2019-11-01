@@ -45,6 +45,13 @@ struct Convolution {
   int stride;
   WeightFiller weight_filler;
   bool bias_term;
+
+  Convolution(){
+    output_size=0;
+    kernel_size=1;
+    pad=0;
+    stride=1;
+  }
 };
 
 struct InputLayer {

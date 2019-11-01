@@ -82,7 +82,7 @@ int Config::ParseLayer() {
     if(file_buf_[cur++].find("layer") != std::string::npos) {
       std::string lbuf = file_buf_[cur++]; //name line
       Poco::StringTokenizer name_st(lbuf,":");
-      layer.name = name_st[1];
+      layer.name = Poco::trim(name_st[1]);
       lbuf = file_buf_[cur++]; // type line
       Poco::StringTokenizer type_st(lbuf,":");
       layer.type = lbuf = Poco::trim(type_st[1]);
@@ -125,8 +125,11 @@ int Config::ParseLayer() {
             cur++; //pass over weight "}"
           }
         }
-        cur++; //pass over convolution "}"
+//        std::cout << "layer.name = " << layer.name <<std::endl;
+//        std::cout << "layer.type = " << layer.type <<std::endl;
+//        std::cout << "current lbuf " << file_buf_[cur] << std::endl;
       } else if(layer.type == "\"BatchNorm\"") { //batch norm
+        std::cout << "in config bn, cur line = " << file_buf_[cur] << std::endl;
         cur++;
         while(1) {
           lbuf = file_buf_[cur++]; // get line.
@@ -140,7 +143,7 @@ int Config::ParseLayer() {
             layer.batch_norm.scale_bias = (st[1]=="true"?true:false);
           }
         }
-        cur++; //pass over batch norm "}"
+        //cur++; //pass over batch norm "}"
       } else if (layer.type == "\"Pooling\"") {
         cur++;
         while(1) {
@@ -155,7 +158,7 @@ int Config::ParseLayer() {
             layer.pooling.stride = atoi(st[1].c_str());
           }
         }
-        cur++; //pass over pooling_pram "}"
+        //cur++; //pass over pooling_pram "}"
       } else if (layer.type == "\"Eltwise\"") {
         cur++;
 //        std::cout << "eltwise bottom size = " << layer.bottom.size() << std::endl;
@@ -186,11 +189,14 @@ int Config::ParseLayer() {
                 layer.inner_product.bias_filler.value = atoi(bst[1].c_str());
               }
             }
-            cur++; //pass over bias filler "}"
+            //cur++; //pass over bias filler "}"
           }
         }
-        cur++; //pass over inner_product "}"
+        //cur++; //pass over inner_product "}"
       }
+      std::cout << "pass over layer } current lbuf " << file_buf_[cur] << std::endl;\
+      std::cout << "layer.name =" << layer.name << ", type=" << layer.type << std::endl;
+      std::cout << "next line ===  " << file_buf_[cur+1] << std::endl;
       cur++; //pass over layer "}"
     }
     if(layer.name.length() != 0) {
